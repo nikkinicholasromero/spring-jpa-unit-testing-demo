@@ -25,7 +25,7 @@ public class EmployeeRepositoryTest {
     private EmployeeRepository employeeRepository;
 
     @Test
-    public void findAll_save_findById() {
+    public void findAll() {
         List<Employee> employees = IterableUtils.toList(employeeRepository.findAll());
         assertThat(employees).isEmpty();
 
@@ -43,23 +43,81 @@ public class EmployeeRepositoryTest {
                 startTime,
                 false);
 
-        employeeRepository.save(employee);
+        entityManager.persist(employee);
 
         employees = IterableUtils.toList(employeeRepository.findAll());
         assertThat(employees).isNotEmpty();
         assertThat(employees.size()).isEqualTo(1L);
         assertThat(employees.get(0)).isEqualTo(employee);
+        assertThat(employees.get(0).id()).isEqualTo(id);
+        assertThat(employees.get(0).firstName()).isEqualTo("Nikki Nicholas");
+        assertThat(employees.get(0).lastName()).isEqualTo("Romero");
+        assertThat(employees.get(0).numberOfDependents()).isEqualTo(BigInteger.valueOf(3L));
+        assertThat(employees.get(0).height()).isEqualTo(BigDecimal.valueOf(177.2));
+        assertThat(employees.get(0).weight()).isEqualTo(BigDecimal.valueOf(76.3));
+        assertThat(employees.get(0).hiredDate()).isEqualTo(hiredDate);
+        assertThat(employees.get(0).startTime()).isEqualTo(startTime);
+        assertThat(employees.get(0).isRegular()).isFalse();
+    }
 
-        Employee fetchedEmployee = employeeRepository.findById(employee.id()).orElseThrow();
-        assertThat(fetchedEmployee).isEqualTo(employee);
-        assertThat(fetchedEmployee.id()).isEqualTo(id);
-        assertThat(fetchedEmployee.firstName()).isEqualTo("Nikki Nicholas");
-        assertThat(fetchedEmployee.lastName()).isEqualTo("Romero");
-        assertThat(fetchedEmployee.numberOfDependents()).isEqualTo(BigInteger.valueOf(3L));
-        assertThat(fetchedEmployee.height()).isEqualTo(BigDecimal.valueOf((177.2)));
-        assertThat(fetchedEmployee.weight()).isEqualTo(BigDecimal.valueOf(76.3));
-        assertThat(fetchedEmployee.hiredDate()).isEqualTo(hiredDate);
-        assertThat(fetchedEmployee.startTime()).isEqualTo(startTime);
-        assertThat(fetchedEmployee.isRegular()).isFalse();
+    @Test
+    public void findById() {
+        String id1 = UUID.randomUUID().toString();
+        LocalDate hiredDate1 = LocalDate.now();
+        LocalTime startTime1 = LocalTime.now();
+        Employee employee1 = new Employee(
+                id1,
+                "Nikki Nicholas",
+                "Romero",
+                BigInteger.valueOf(3L),
+                BigDecimal.valueOf(177.2),
+                BigDecimal.valueOf(76.3),
+                hiredDate1,
+                startTime1,
+                false);
+
+        entityManager.persist(employee1);
+
+        String id2 = UUID.randomUUID().toString();
+        LocalDate hiredDate2 = LocalDate.now();
+        LocalTime startTime2 = LocalTime.now();
+        Employee employee2 = new Employee(
+                id2,
+                "Leslie Anne",
+                "Sayin",
+                BigInteger.valueOf(2L),
+                BigDecimal.valueOf(145.2),
+                BigDecimal.valueOf(64.3),
+                hiredDate2,
+                startTime2,
+                true);
+
+        entityManager.persist(employee2);
+
+        Employee fetchedEmployee1 = employeeRepository.findById(employee1.id()).orElseThrow();
+        assertThat(fetchedEmployee1).isEqualTo(employee1);
+        assertThat(fetchedEmployee1.id()).isEqualTo(id1);
+        assertThat(fetchedEmployee1.firstName()).isEqualTo("Nikki Nicholas");
+        assertThat(fetchedEmployee1.lastName()).isEqualTo("Romero");
+        assertThat(fetchedEmployee1.numberOfDependents()).isEqualTo(BigInteger.valueOf(3L));
+        assertThat(fetchedEmployee1.height()).isEqualTo(BigDecimal.valueOf(177.2));
+        assertThat(fetchedEmployee1.weight()).isEqualTo(BigDecimal.valueOf(76.3));
+        assertThat(fetchedEmployee1.hiredDate()).isEqualTo(hiredDate1);
+        assertThat(fetchedEmployee1.startTime()).isEqualTo(startTime1);
+        assertThat(fetchedEmployee1.isRegular()).isFalse();
+
+        Employee fetchedEmployee2 = employeeRepository.findById(employee2.id()).orElseThrow();
+        assertThat(fetchedEmployee2).isEqualTo(employee2);
+        assertThat(fetchedEmployee2.id()).isEqualTo(id2);
+        assertThat(fetchedEmployee2.firstName()).isEqualTo("Leslie Anne");
+        assertThat(fetchedEmployee2.lastName()).isEqualTo("Sayin");
+        assertThat(fetchedEmployee2.numberOfDependents()).isEqualTo(BigInteger.valueOf(2L));
+        assertThat(fetchedEmployee2.height()).isEqualTo(BigDecimal.valueOf(145.2));
+        assertThat(fetchedEmployee2.weight()).isEqualTo(BigDecimal.valueOf(64.3));
+        assertThat(fetchedEmployee2.hiredDate()).isEqualTo(hiredDate2);
+        assertThat(fetchedEmployee2.startTime()).isEqualTo(startTime2);
+        assertThat(fetchedEmployee2.isRegular()).isTrue();
+
+        assertThat(employeeRepository.findById(employee1.id() + employee2.id())).isEmpty();
     }
 }
