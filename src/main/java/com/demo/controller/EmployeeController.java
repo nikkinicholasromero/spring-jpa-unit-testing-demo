@@ -1,5 +1,9 @@
-package com.demo;
+package com.demo.controller;
 
+import com.demo.dto.CreateEmployeeRequest;
+import com.demo.dto.EmployeeDto;
+import com.demo.dto.UpdateEmployeeRequest;
+import com.demo.service.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

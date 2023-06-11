@@ -1,5 +1,7 @@
-package com.demo;
+package com.demo.transformer;
 
+import com.demo.database.entity.Employee;
+import com.demo.dto.EmployeeDto;
 import org.springframework.stereotype.Component;
 
 @Component
